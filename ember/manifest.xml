@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install PUBLIC "-//Joomla! 1.5//DTD template 1.0//EN" "http://www.joomla.org/xml/dtd/1.5/template-install.dtd">
+<install version="1.5" type="template">
+	<name>Teemr</name>
+	<creationDate>July 2014</creationDate>
+	<author>Babs Gosgens</author>
+	<authorEmail>babsgosgens@gmail.com</authorEmail>
+	<authorUrl>http://www.crossinghippos.nl</authorUrl>
+	<copyright>Copyright (C) 2014 Teemr and Contributors. (http://www.teemr.com)</copyright>
+	<license>GNU GPLv3</license>
+	<version>1.0.2</version>
+	<description>Teemr theme</description>
+</install>
