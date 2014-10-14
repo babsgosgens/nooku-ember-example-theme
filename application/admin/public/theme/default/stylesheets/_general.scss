@@ -1,0 +1,46 @@
+/* -- General styles ------------------------------ */
+.text--small {
+    font-size: smaller;
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.group:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.hide {
+    display: none;
+}
+
+.radio input[type="radio"], .checkbox input[type="checkbox"] {
+    &.level2 {
+        margin-left: (0px * 1);
+        margin-right: 6px;
+    }
+    &.level3 {
+        margin-left: (18px * 2);
+        margin-right: 6px;
+    }
+    &.level4 {
+        margin-left: (18px * 3);
+        margin-right: 6px;
+    }
+    &.level5 {
+        margin-left: (18px * 4);
+        margin-right: 6px;
+    }
+}
+
+[data-action] {
+    cursor: pointer;
+}

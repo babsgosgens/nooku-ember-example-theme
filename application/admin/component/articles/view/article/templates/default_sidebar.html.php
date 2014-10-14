@@ -1,0 +1,82 @@
+<?php
+/**
+ * Nooku Platform - http://www.nooku.org/platform
+ *
+ * @copyright	Copyright (C) 2011 - 2014 Johan Janssens and Timble CVBA. (http://www.timble.net)
+ * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link		https://github.com/nooku/nooku-platform for the canonical source repository
+ */
+?>
+
+<fieldset>
+    <div>
+        <label for="published"><?= translate('Published') ?></label>
+        <div>
+            <input type="checkbox" name="published" value="1" <?= $article->published ? 'checked="checked"' : '' ?> />
+        </div>
+    </div>
+    <div>
+        <label for="access"><?= translate('Registered') ?></label>
+        <div>
+            <input type="checkbox" name="access" value="1" <?= $article->access ? 'checked="checked"' : '' ?> />
+        </div>
+    </div>
+    <div>
+        <label for="publish_on"><?= translate('Publish on') ?></label>
+        <div>
+            <?= helper('date.datetime', array('entity' => $article, 'name' => 'publish_on')) ?>
+        </div>
+    </div>
+    <div>
+        <label for="unpublish_on"><?= translate('Unpublish on') ?></label>
+        <div>
+            <?= helper('date.datetime', array('entity' => $article, 'name' => 'unpublish_on')) ?>
+        </div>
+    </div>
+</fieldset>
+
+<div class="tabs tabs-horizontal">
+    <div class="tab">
+        <input type="radio" id="tab-1" name="tab-group-1" checked="">
+        <label for="tab-1"><?= translate('Classifications') ?></label>
+        <div class="content">
+            <fieldset>
+                <legend><?= translate('Category') ?></legend>
+                <?= helper('com:categories.radiolist.categories', array('entity' => $article, 'uncategorised' => true)) ?>
+            </fieldset>
+            <? if($article->isTaggable()) : ?>
+                <fieldset>
+                    <legend><?= translate('Tags') ?></legend>
+                    <?= helper('com:tags.listbox.tags', array('name' => 'tags[]', 'selected' => $article->getTags(), 'filter' => array('table' => 'articles'), 'attribs' => array('class' => 'select-tags', 'multiple' => 'multiple', 'style' => 'width:220px'))) ?>
+                </fieldset>
+            <? endif ?>
+        </div>
+    </div>
+    <? if($article->isAttachable()) : ?>
+    <div class="tab">
+        <input type="radio" id="tab-3" name="tab-group-1">
+        <label for="tab-3"><?= translate('Attachments') ?></label>
+        <div class="content">
+            <fieldset>
+                <? if (!$article->isNew()) : ?>
+                    <?= import('com:attachments.attachments.list.html', array('attachments' => $article->getAttachments(), 'attachments_attachment_id' => $article->attachments_attachment_id)) ?>
+                <? endif ?>
+                <?= import('com:attachments.attachments.upload.html') ?>
+            </fieldset>
+        </div>
+    </div>
+    <? endif ?>
+</div>
+
+<? if($article->isTranslatable()) : ?>
+    <fieldset>
+        <legend><?= translate('Translations') ?></legend>
+        <? $translations = $article->getTranslations() ?>
+        <? foreach($article->getLanguages() as $language) : ?>
+            <?= $language->name.':' ?>
+            <? $translation = $translations->find(array('iso_code' => $language->iso_code)) ?>
+            <?= helper('com:languages.grid.status',
+                array('status' => $translation->status, 'original' => $translation->original, 'deleted' => $translation->deleted)) ?>
+        <? endforeach ?>
+    </fieldset>
+<? endif ?>
