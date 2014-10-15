@@ -29,7 +29,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link href="assets://application/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
-    <link rel="stylesheet" href="assets://application//stylesheets/app.css">
+    <link rel="stylesheet" href="assets://application//styles/default.css">
     <script src="assets://application//javascripts/modernizr-2.6.2.min.js"></script>
 
 </head>

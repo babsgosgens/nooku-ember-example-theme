@@ -126,8 +126,15 @@ require.register("config/router", function(exports, require, module) {
 
 module.exports = App.Router.map(function() {
     // this.resource('about');
+    this.route('index', {path: '/'});
+    this.resource('articles', function(){
+        this.route('article', {path: ':slug'});
+    });
 });
 
+// module.exports = App.Router.reopen({
+//   location: 'history'
+// });
 });
 
 require.register("config/store", function(exports, require, module) {
@@ -204,7 +211,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("<h2>Welcome to Ember.js</h2>\n<ul>\n  ");
+  data.buffer.push("<header class=\"container\">\n    <nav class=\"navbar navbar-default\">\n        <a class=\"navbar-brand\" href=\"/\">Nooku Platform</a>\n        <div>\n            <nav role=\"navigation\">\n    <ul class=\"nav navbar-nav\"><li class=\"active current\"><a href=\"/\">Home</a></li><li><a href=\"/articles\">Articles</a></li><li><a href=\"/files\">Files</a></li></ul></nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n        <div class=\"form-group\">\n            <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n        </div>\n        <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n    </nav>\n</header>\n\n\n<h2>Welcome to Ember.js</h2>\n<ul>\n  ");
   stack1 = helpers.each.call(depth0, "item", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n</ul>\n");
