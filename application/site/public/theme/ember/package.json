@@ -20,8 +20,10 @@
     "update:skeleton": "node setup.js update:skeleton"
   },
   "dependencies": {
+
     "javascript-brunch": "~1.7.0",
     "css-brunch": "~1.7.0",
+    "sass-brunch": "1.4.2",
     "stylus-brunch": "~1.7.0",
     "uglify-js-brunch": "~1.7.0",
     "clean-css-brunch": "~1.7.0",
