@@ -1,1 +1,23 @@
+<header class="container">
+    <nav class="navbar navbar-default">
+        <a class="navbar-brand" href="/">{{pageTitle}}</a>
+        <div>
+            <nav role="navigation">
+                <ul class="nav navbar-nav">
+                    {{#link-to 'index' tagName='li'}}<a {{bindAttr href="view.href"}}>Home</a>{{/link-to}}
+                    {{#link-to 'articles' tagName='li'}}<a {{bindAttr href="view.href"}}>Articles</a>{{/link-to}}
+                    {{#link-to 'files' tagName='li'}}<a {{bindAttr href="view.href"}}>Files</a>{{/link-to}}
+                </ul>
+            </nav>
+        </div>
+        <form action="/search" method="get" class="navbar-form pull-right">
+            <div class="form-group">
+                <input id="search" name="search" class="form-control" type="text" value="" placeholder="Search articles">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </nav>
+</header>
+
+
 {{outlet}}

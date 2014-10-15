@@ -130,6 +130,9 @@ module.exports = App.Router.map(function() {
     this.resource('articles', function(){
         this.route('article', {path: ':slug'});
     });
+    this.resource('files', function(){
+        this.route('file', {path: ':slug'});
+    });
 });
 
 // module.exports = App.Router.reopen({
@@ -144,12 +147,22 @@ module.exports = App.ApplicationStore = DS.Store.extend();
 
 });
 
+require.register("controllers/ApplicationController", function(exports, require, module) {
+'use strict';
+
+module.exports = App.ApplicationController = Ember.Controller.extend({
+  pageTitle: 'Nooku Platform'
+});
+
+});
+
 require.register("initialize", function(exports, require, module) {
 'use strict';
 
 window.App = require('config/app');
 require('config/router');
 require('config/store');
+require('controllers/ApplicationController');
 
 // Load all modules in order automagically. Ember likes things to work this
 // way so everything is in the App.* namespace.
@@ -184,9 +197,60 @@ require.register("templates/application", function(exports, require, module) {
 module.exports = Ember.TEMPLATES['application'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1;
+  var buffer = '', stack1, helper, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
 
+function program1(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("<a ");
+  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+    'href': ("view.href")
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  data.buffer.push(">Home</a>");
+  return buffer;
+  }
 
+function program3(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("<a ");
+  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+    'href': ("view.href")
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  data.buffer.push(">Articles</a>");
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("<a ");
+  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+    'href': ("view.href")
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  data.buffer.push(">Files</a>");
+  return buffer;
+  }
+
+  data.buffer.push("<header class=\"container\">\n    <nav class=\"navbar navbar-default\">\n        <a class=\"navbar-brand\" href=\"/\">");
+  stack1 = helpers._triageMustache.call(depth0, "pageTitle", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("</a>\n        <div>\n            <nav role=\"navigation\">\n                <ul class=\"nav navbar-nav\">\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'tagName': ("li")
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "index", options) : helperMissing.call(depth0, "link-to", "index", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'tagName': ("li")
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "articles", options) : helperMissing.call(depth0, "link-to", "articles", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'tagName': ("li")
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "files", options) : helperMissing.call(depth0, "link-to", "files", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                </ul>\n            </nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n            <div class=\"form-group\">\n                <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n        </form>\n    </nav>\n</header>\n\n\n");
   stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n");
@@ -211,7 +275,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("<header class=\"container\">\n    <nav class=\"navbar navbar-default\">\n        <a class=\"navbar-brand\" href=\"/\">Nooku Platform</a>\n        <div>\n            <nav role=\"navigation\">\n    <ul class=\"nav navbar-nav\"><li class=\"active current\"><a href=\"/\">Home</a></li><li><a href=\"/articles\">Articles</a></li><li><a href=\"/files\">Files</a></li></ul></nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n        <div class=\"form-group\">\n            <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n        </div>\n        <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n    </nav>\n</header>\n\n\n<h2>Welcome to Ember.js</h2>\n<ul>\n  ");
+  data.buffer.push("\n<h2>Welcome to Ember.js</h2>\n<ul>\n  ");
   stack1 = helpers.each.call(depth0, "item", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n</ul>\n");
