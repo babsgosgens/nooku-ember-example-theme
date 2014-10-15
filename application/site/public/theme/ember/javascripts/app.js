@@ -129,8 +129,19 @@ module.exports = App.Router.map(function() {
     // this.resource('about');
     this.route('index', {path: '/'});
     this.resource('articles', function(){
-        this.resource('article', {path: '/:slug'});
 
+        this.resource('articles.index', {path: '/'});
+
+        this.resource('blog', function(){
+            this.resource('blog.index', {path: '/'});
+            this.resource('blog.article', {path: '/:slug'});
+        });
+
+        this.resource('table', function(){
+            this.resource('table.index', {path: '/'});
+            this.resource('table.article', {path: '/:slug'});
+        });
+        
     });
     this.resource('files', function(){
         this.route('file', {path: ':slug'});
@@ -298,10 +309,21 @@ module.exports = App.Article = DS.Model.extend({
     slug: DS.attr('string'),
     introtext: DS.attr('string'),
     fulltext: DS.attr('string'),
-    introtextHtml: function(){
+    introtextSafe: function(){
         return this.get('introtext').htmlSafe();
     }.property('introtext')
 });
+});
+
+require.register("routes/ArticleRoute", function(exports, require, module) {
+'use strict';
+
+module.exports = App.ArticleRoute = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('article', params.slug);
+  }
+});
+
 });
 
 require.register("routes/ArticlesRoute", function(exports, require, module) {
@@ -315,12 +337,34 @@ module.exports = App.ArticlesRoute = Ember.Route.extend({
 
 });
 
+require.register("routes/BlogRoute", function(exports, require, module) {
+'use strict';
+
+module.exports = App.BlogRoute = Ember.Route.extend({
+  model: function() {
+    return this.modelFor('articles');
+  }
+});
+
+});
+
 require.register("routes/IndexRoute", function(exports, require, module) {
 'use strict';
 
 module.exports = App.IndexRoute = Ember.Route.extend({
   model: function() {
     return ['red', 'yellow', 'blue'];
+  }
+});
+
+});
+
+require.register("routes/TableRoute", function(exports, require, module) {
+'use strict';
+
+module.exports = App.TableRoute = Ember.Route.extend({
+  model: function() {
+    return this.modelFor('articles');
   }
 });
 
@@ -376,33 +420,15 @@ function program5(depth0,data) {
   data.buffer.push("\n                    ");
   stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
     'tagName': ("li")
-  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "articles", options) : helperMissing.call(depth0, "link-to", "articles", options));
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "articles.index", options) : helperMissing.call(depth0, "link-to", "articles.index", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n                    ");
   stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
     'tagName': ("li")
   },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "files", options) : helperMissing.call(depth0, "link-to", "files", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n                </ul>\n            </nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n            <div class=\"form-group\">\n                <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n        </form>\n    </nav>\n</header>\n\n<div class=\"container\">\n    <div class=\"row\">\n        <aside class=\"sidebar col-md-3\">\n            ");
-  data.buffer.push(escapeExpression((helper = helpers.outlet || (depth0 && depth0.outlet),options={hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "sidebar", options) : helperMissing.call(depth0, "outlet", "sidebar", options))));
-  data.buffer.push("\n        </aside>\n        <div class=\"col-md-9\">\n            ");
+  data.buffer.push("\n                </ul>\n            </nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n            <div class=\"form-group\">\n                <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n        </form>\n    </nav>\n</header>\n\n");
   stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        </div>\n    </div>\n</div>");
-  return buffer;
-  
-});
-});
-
-require.register("templates/articles.article", function(exports, require, module) {
-module.exports = Ember.TEMPLATES['articles.article'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
-this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1;
-
-
-  data.buffer.push("   ");
-  stack1 = helpers._triageMustache.call(depth0, "title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   return buffer;
   
@@ -413,34 +439,90 @@ require.register("templates/articles", function(exports, require, module) {
 module.exports = Ember.TEMPLATES['articles'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, helper, options, escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = '';
+  data.buffer.push("<a ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'href': ("view.href")
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(">Blog</a>");
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = '';
+  data.buffer.push("<a ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'href': ("view.href")
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(">Table</a>");
+  return buffer;
+  }
+
+  data.buffer.push("<div class=\"container\">\n    <div class=\"row\">\n        <aside class=\"sidebar col-md-3\">\n            <nav role=\"navigation\">\n                <ul class=\"nav nav-pills nav-stacked\">\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'tagName': ("li")
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "blog", options) : helperMissing.call(depth0, "link-to", "blog", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'tagName': ("li")
+  },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "table", options) : helperMissing.call(depth0, "link-to", "table", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                </ul>\n            </nav>\n        </aside>\n        <div class=\"col-md-9\">\n            ");
+  stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n        </div>\n    </div>\n</div>");
+  return buffer;
+  
+});
+});
+
+require.register("templates/blog", function(exports, require, module) {
+module.exports = Ember.TEMPLATES['blog'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, self=this, helperMissing=helpers.helperMissing;
 
 function program1(depth0,data) {
   
   var buffer = '', stack1, helper, options;
   data.buffer.push("\n    <article>\n        <header>\n            <h1>");
-  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "article", "article.slug", options) : helperMissing.call(depth0, "link-to", "article", "article.slug", options));
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "blog.article", "", options) : helperMissing.call(depth0, "link-to", "blog.article", "", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("</h1>\n        </header>\n        ");
-  stack1 = helpers._triageMustache.call(depth0, "article.introtextHtml", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  stack1 = helpers._triageMustache.call(depth0, "introtextSafe", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </article>\n    ");
+  data.buffer.push("\n        ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
+    'classNames': ("article__readmore")
+  },hashTypes:{'classNames': "STRING"},hashContexts:{'classNames': depth0},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "blog.article", "", options) : helperMissing.call(depth0, "link-to", "blog.article", "", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </article>   \n    ");
   return buffer;
   }
 function program2(depth0,data) {
   
   var stack1;
-  stack1 = helpers._triageMustache.call(depth0, "article.title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  stack1 = helpers._triageMustache.call(depth0, "title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   else { data.buffer.push(''); }
   }
 
-  data.buffer.push("<section>\n    \n    ");
-  stack1 = helpers.each.call(depth0, "article", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+function program4(depth0,data) {
+  
+  
+  data.buffer.push("Read more");
+  }
+
+  data.buffer.push("<section>\n    <div class=\"page-header\">\n        <h1>Blog</h1>\n    </div>\n    ");
+  stack1 = helpers.each.call(depth0, {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    \n\n    <ul class=\"pagination\"><li class=\"pagination__offset active\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=0\">1</a></li><li class=\"pagination__offset\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3\">2</a></li><li class=\"pagination__next\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3\" rel=\"next\">Next</a></li></ul>\n\n</section>\n\n");
-  stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(" \n</section>");
   return buffer;
   
 });
@@ -450,10 +532,48 @@ require.register("templates/index", function(exports, require, module) {
 module.exports = Ember.TEMPLATES['index'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, helper, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+
+
+  data.buffer.push("<div class=\"container\">\n    <div class=\"row\">\n        <aside class=\"sidebar col-md-3\">\n            ");
+  data.buffer.push(escapeExpression((helper = helpers.outlet || (depth0 && depth0.outlet),options={hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "sidebar", options) : helperMissing.call(depth0, "outlet", "sidebar", options))));
+  data.buffer.push("\n        </aside>\n        <div class=\"col-md-9\">\n            ");
+  stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n\n            <article>\n                <header>\n                    <h1><a href=\"/2-cras\">Cras</a></h1>\n                </header>\n\n\n                <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada magna mollis euismod.</p>        <a class=\"article__readmore\" href=\"/2-cras\">Read more</a>\n            </article>    \n            <article>\n                <header>\n                <h1><a href=\"/3-elit-adipiscing\">Elit Adipiscing</a></h1>\n                                </header>\n\n\n                <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Donec sed odio dui. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor.</p>        <a class=\"article__readmore\" href=\"/3-elit-adipiscing\">Read more</a>\n            </article>    \n            <article>\n                <header>\n                <h1><a href=\"/5-nibh-vulputate\">Nibh Vulputate</a></h1>\n                                </header>\n\n\n                <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum.</p>        <a class=\"article__readmore\" href=\"/5-nibh-vulputate\">Read more</a>\n            </article>\n        </div>\n    </div>\n</div>\n");
+  return buffer;
   
+});
+});
 
+require.register("templates/table", function(exports, require, module) {
+module.exports = Ember.TEMPLATES['table'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, self=this, helperMissing=helpers.helperMissing;
 
-  data.buffer.push("    <article>\n        <header>\n            <h1><a href=\"/2-cras\">Cras</a></h1>\n        </header>\n\n\n        <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada magna mollis euismod.</p>        <a class=\"article__readmore\" href=\"/2-cras\">Read more</a>\n    </article>    \n    <article>\n        <header>\n        <h1><a href=\"/3-elit-adipiscing\">Elit Adipiscing</a></h1>\n                        </header>\n\n\n        <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Donec sed odio dui. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor.</p>        <a class=\"article__readmore\" href=\"/3-elit-adipiscing\">Read more</a>\n    </article>    \n    <article>\n        <header>\n        <h1><a href=\"/5-nibh-vulputate\">Nibh Vulputate</a></h1>\n                        </header>\n\n\n        <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum.</p>        <a class=\"article__readmore\" href=\"/5-nibh-vulputate\">Read more</a>\n    </article>\n");
+function program1(depth0,data) {
+  
+  var buffer = '', stack1, helper, options;
+  data.buffer.push("\n            <tr>\n                <td>\n                    ");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "table.article", "", options) : helperMissing.call(depth0, "link-to", "table.article", "", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                </td>\n            </tr>\n            ");
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var stack1;
+  stack1 = helpers._triageMustache.call(depth0, "title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  else { data.buffer.push(''); }
+  }
+
+  data.buffer.push("<section>\n                \n    <div class=\"page-header\">\n        <h1>Table</h1>\n    </div>\n\n    <table class=\"table table-striped\">\n        <thead>\n            <tr>\n                <th width=\"100%\">\n                    Title\n                </th>\n            </tr>\n        </thead>\n        <tbody>\n            ");
+  stack1 = helpers.each.call(depth0, {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n        </tbody>\n    </table>\n</section>");
+  return buffer;
   
 });
 });

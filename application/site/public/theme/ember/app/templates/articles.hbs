@@ -1,17 +1,15 @@
-<section>
-    
-    {{#each article in content}}
-    <article>
-        <header>
-            <h1>{{#link-to 'article' article.slug}}{{article.title}}{{/link-to}}</h1>
-        </header>
-        {{article.introtextHtml}}
-    </article>
-    {{/each}}
-    
-
-    <ul class="pagination"><li class="pagination__offset active"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=0">1</a></li><li class="pagination__offset"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3">2</a></li><li class="pagination__next"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3" rel="next">Next</a></li></ul>
-
-</section>
-
-{{outlet}}
+<div class="container">
+    <div class="row">
+        <aside class="sidebar col-md-3">
+            <nav role="navigation">
+                <ul class="nav nav-pills nav-stacked">
+                    {{#link-to 'blog' tagName='li'}}<a {{bind-attr href="view.href"}}>Blog</a>{{/link-to}}
+                    {{#link-to 'table' tagName='li'}}<a {{bind-attr href="view.href"}}>Table</a>{{/link-to}}
+                </ul>
+            </nav>
+        </aside>
+        <div class="col-md-9">
+            {{outlet}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<section>
+    <div class="page-header">
+        <h1>Blog</h1>
+    </div>
+    {{#each}}
+    <article>
+        <header>
+            <h1>{{#link-to 'blog.article' this}}{{title}}{{/link-to}}</h1>
+        </header>
+        {{introtextSafe}}
+        {{#link-to 'blog.article' this classNames='article__readmore'}}Read more{{/link-to}}
+    </article>   
+    {{/each}} 
+</section>

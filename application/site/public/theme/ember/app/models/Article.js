@@ -5,7 +5,7 @@ module.exports = App.Article = DS.Model.extend({
     slug: DS.attr('string'),
     introtext: DS.attr('string'),
     fulltext: DS.attr('string'),
-    introtextHtml: function(){
+    introtextSafe: function(){
         return this.get('introtext').htmlSafe();
     }.property('introtext')
 });

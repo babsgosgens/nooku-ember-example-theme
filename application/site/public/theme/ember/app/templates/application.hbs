@@ -5,7 +5,7 @@
             <nav role="navigation">
                 <ul class="nav navbar-nav">
                     {{#link-to 'index' tagName='li'}}<a {{bind-attr href="view.href"}}>Home</a>{{/link-to}}
-                    {{#link-to 'articles' tagName='li'}}<a {{bind-attr href="view.href"}}>Articles</a>{{/link-to}}
+                    {{#link-to 'articles.index' tagName='li'}}<a {{bind-attr href="view.href"}}>Articles</a>{{/link-to}}
                     {{#link-to 'files' tagName='li'}}<a {{bind-attr href="view.href"}}>Files</a>{{/link-to}}
                 </ul>
             </nav>
@@ -19,13 +19,4 @@
     </nav>
 </header>
 
-<div class="container">
-    <div class="row">
-        <aside class="sidebar col-md-3">
-            {{outlet sidebar}}
-        </aside>
-        <div class="col-md-9">
-            {{outlet}}
-        </div>
-    </div>
-</div>
+{{outlet}}
