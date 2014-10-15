@@ -1,0 +1,17 @@
+<section>
+    
+    {{#each article in content}}
+    <article>
+        <header>
+            <h1>{{#link-to 'article' article.slug}}{{article.title}}{{/link-to}}</h1>
+        </header>
+        {{article.introtextHtml}}
+    </article>
+    {{/each}}
+    
+
+    <ul class="pagination"><li class="pagination__offset active"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=0">1</a></li><li class="pagination__offset"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3">2</a></li><li class="pagination__next"><a href="/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3" rel="next">Next</a></li></ul>
+
+</section>
+
+{{outlet}}

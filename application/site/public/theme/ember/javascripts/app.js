@@ -95,7 +95,8 @@ require.register("config/app", function(exports, require, module) {
 
 var config = {
     LOG_TRANSITIONS: true,
-    LOG_TRANSITIONS_INTERNAL: false
+    LOG_TRANSITIONS_INTERNAL: false,
+    apiMode: 'system' // seo | system
   };
 
 module.exports = Ember.Application.create(config);
@@ -128,7 +129,8 @@ module.exports = App.Router.map(function() {
     // this.resource('about');
     this.route('index', {path: '/'});
     this.resource('articles', function(){
-        this.route('article', {path: ':slug'});
+        this.resource('article', {path: '/:slug'});
+
     });
     this.resource('files', function(){
         this.route('file', {path: ':slug'});
@@ -136,7 +138,7 @@ module.exports = App.Router.map(function() {
 });
 
 module.exports = App.Router.reopen({
-  location: 'history'
+  location: 'hash'
 });
 });
 
@@ -145,6 +147,104 @@ require.register("config/store", function(exports, require, module) {
 
 module.exports = App.ApplicationStore = DS.Store.extend();
 
+
+module.exports = App.ApplicationAdapter = DS.RESTAdapter.extend({
+
+    primaryKey: 'id',
+
+    /**
+    http://emberjs.com/api/data/classes/DS.RESTAdapter.html#method_buildURL
+    */
+    buildURL: function(type, id, record) {
+
+        var url = [],
+            host = Ember.get(this, 'host'),
+            prefix = this.urlPrefix();
+
+        if (App.get('apiMode') == 'seo') {
+
+
+            if (type) { url.push(this.pathForType(type)); }
+
+            //We might get passed in an array of ids from findMany
+            //in which case we don't want to modify the url, as the
+            //ids will be passed in through a query param
+            if (id && !Ember.isArray(id)) { url.push(id); }
+
+            if (prefix) { url.unshift(prefix); }
+
+            url = url.join('/');
+
+            url = url + '?format=json'
+        }
+
+        if (App.get('apiMode') == 'system') {
+
+            url.push('format=json');
+
+            if (type) { 
+                url.push('component='+this.pathForType(type));
+                url.push('view='+this.pathForType(type));
+            }
+
+            if (id && !Ember.isArray(id)) { url.push(this.get('primaryKey') +'='+id); }
+
+            // Not sure about this, can it be left out?
+            // if (prefix) { url.unshift(prefix); }
+
+            url = '?' + url.join('&');
+        }
+
+        if (!host && url) { url = '/' + url; }
+        
+        console.log(url);
+
+        return url;
+    },
+});
+
+module.exports = App.ApplicationSerializer = DS.RESTSerializer.extend({
+
+  primaryKey: 'id',
+
+  entityNamespace: function(type){
+    return ( (type + '').split('.')[1] ).toLowerCase();
+  },
+  entitiesNamespace: function(type){
+    return Ember.Inflector.inflector.pluralize( (type + '').split('.')[1] ).toLowerCase();
+  },
+  extractArray: function(store, type, payload) {
+
+    var entities = this.entitiesNamespace(type);
+
+    var content = {};
+    content[entities] = payload.entities;
+
+    return this._super(store, type, content);
+  },
+  extractSingle: function(store, type, payload, id) {
+
+    var entities = this.entityNamespace(type);
+
+    var content = {};
+    content[entities] = payload.entities;
+
+    return this._super(store, type, payload);
+  },
+  normalize: function(type, hash) {
+
+    delete hash.version;
+    delete hash.links;
+    delete hash.meta;
+
+    if(this.get('primaryKey') != 'id') {
+      hash.id = hash[this.get('primaryKey')];
+      delete hash[this.get('primaryKey')];
+    }
+
+    return this._super(type, hash);
+  }
+});
 });
 
 require.register("controllers/ApplicationController", function(exports, require, module) {
@@ -152,6 +252,14 @@ require.register("controllers/ApplicationController", function(exports, require,
 
 module.exports = App.ApplicationController = Ember.Controller.extend({
   pageTitle: 'Nooku Platform'
+});
+
+});
+
+require.register("controllers/ArticlesController", function(exports, require, module) {
+'use strict';
+
+module.exports = App.ArticlesController = Ember.ArrayController.extend({
 });
 
 });
@@ -182,6 +290,31 @@ folderOrder.forEach(function(folder) {
 
 });
 
+require.register("models/Article", function(exports, require, module) {
+'use strict';
+
+module.exports = App.Article = DS.Model.extend({
+    title: DS.attr('string'),
+    slug: DS.attr('string'),
+    introtext: DS.attr('string'),
+    fulltext: DS.attr('string'),
+    introtextHtml: function(){
+        return this.get('introtext').htmlSafe();
+    }.property('introtext')
+});
+});
+
+require.register("routes/ArticlesRoute", function(exports, require, module) {
+'use strict';
+
+module.exports = App.ArticlesRoute = Ember.Route.extend({
+  model: function() {
+    return this.store.findAll('article');
+  }
+});
+
+});
+
 require.register("routes/IndexRoute", function(exports, require, module) {
 'use strict';
 
@@ -197,37 +330,37 @@ require.register("templates/application", function(exports, require, module) {
 module.exports = Ember.TEMPLATES['application'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, helper, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
+  var buffer = '', stack1, helper, options, escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
 
 function program1(depth0,data) {
   
-  var buffer = '', helper, options;
+  var buffer = '';
   data.buffer.push("<a ");
-  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
     'href': ("view.href")
-  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(">Home</a>");
   return buffer;
   }
 
 function program3(depth0,data) {
   
-  var buffer = '', helper, options;
+  var buffer = '';
   data.buffer.push("<a ");
-  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
     'href': ("view.href")
-  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(">Articles</a>");
   return buffer;
   }
 
 function program5(depth0,data) {
   
-  var buffer = '', helper, options;
+  var buffer = '';
   data.buffer.push("<a ");
-  data.buffer.push(escapeExpression((helper = helpers.bindAttr || (depth0 && depth0.bindAttr),options={hash:{
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
     'href': ("view.href")
-  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "bindAttr", options))));
+  },hashTypes:{'href': "STRING"},hashContexts:{'href': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(">Files</a>");
   return buffer;
   }
@@ -261,27 +394,66 @@ function program5(depth0,data) {
 });
 });
 
+require.register("templates/articles.article", function(exports, require, module) {
+module.exports = Ember.TEMPLATES['articles.article'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1;
+
+
+  data.buffer.push("   ");
+  stack1 = helpers._triageMustache.call(depth0, "title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  return buffer;
+  
+});
+});
+
+require.register("templates/articles", function(exports, require, module) {
+module.exports = Ember.TEMPLATES['articles'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, self=this, helperMissing=helpers.helperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = '', stack1, helper, options;
+  data.buffer.push("\n    <article>\n        <header>\n            <h1>");
+  stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "article", "article.slug", options) : helperMissing.call(depth0, "link-to", "article", "article.slug", options));
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("</h1>\n        </header>\n        ");
+  stack1 = helpers._triageMustache.call(depth0, "article.introtextHtml", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </article>\n    ");
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var stack1;
+  stack1 = helpers._triageMustache.call(depth0, "article.title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  else { data.buffer.push(''); }
+  }
+
+  data.buffer.push("<section>\n    \n    ");
+  stack1 = helpers.each.call(depth0, "article", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    \n\n    <ul class=\"pagination\"><li class=\"pagination__offset active\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=0\">1</a></li><li class=\"pagination__offset\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3\">2</a></li><li class=\"pagination__next\"><a href=\"/?limit=3&amp;sort=ordering_date&amp;direction=DESC&amp;offset=3\" rel=\"next\">Next</a></li></ul>\n\n</section>\n\n");
+  stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  return buffer;
+  
+});
+});
+
 require.register("templates/index", function(exports, require, module) {
 module.exports = Ember.TEMPLATES['index'] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, self=this;
-
-function program1(depth0,data) {
   
-  var buffer = '', stack1;
-  data.buffer.push("\n    <li>");
-  stack1 = helpers._triageMustache.call(depth0, "item", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("</li>\n  ");
-  return buffer;
-  }
 
-  data.buffer.push("\n<h2>Welcome to Ember.js</h2>\n<ul>\n  ");
-  stack1 = helpers.each.call(depth0, "item", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n</ul>\n");
-  return buffer;
+
+  data.buffer.push("    <article>\n        <header>\n            <h1><a href=\"/2-cras\">Cras</a></h1>\n        </header>\n\n\n        <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada magna mollis euismod.</p>        <a class=\"article__readmore\" href=\"/2-cras\">Read more</a>\n    </article>    \n    <article>\n        <header>\n        <h1><a href=\"/3-elit-adipiscing\">Elit Adipiscing</a></h1>\n                        </header>\n\n\n        <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Donec sed odio dui. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor.</p>        <a class=\"article__readmore\" href=\"/3-elit-adipiscing\">Read more</a>\n    </article>    \n    <article>\n        <header>\n        <h1><a href=\"/5-nibh-vulputate\">Nibh Vulputate</a></h1>\n                        </header>\n\n\n        <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum.</p>        <a class=\"article__readmore\" href=\"/5-nibh-vulputate\">Read more</a>\n    </article>\n");
   
 });
 });
