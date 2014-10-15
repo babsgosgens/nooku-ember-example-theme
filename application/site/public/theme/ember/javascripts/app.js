@@ -135,9 +135,9 @@ module.exports = App.Router.map(function() {
     });
 });
 
-// module.exports = App.Router.reopen({
-//   location: 'history'
-// });
+module.exports = App.Router.reopen({
+  location: 'history'
+});
 });
 
 require.register("config/store", function(exports, require, module) {
@@ -250,10 +250,12 @@ function program5(depth0,data) {
     'tagName': ("li")
   },hashTypes:{'tagName': "STRING"},hashContexts:{'tagName': depth0},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["STRING"],data:data},helper ? helper.call(depth0, "files", options) : helperMissing.call(depth0, "link-to", "files", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n                </ul>\n            </nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n            <div class=\"form-group\">\n                <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n        </form>\n    </nav>\n</header>\n\n\n");
+  data.buffer.push("\n                </ul>\n            </nav>\n        </div>\n        <form action=\"/search\" method=\"get\" class=\"navbar-form pull-right\">\n            <div class=\"form-group\">\n                <input id=\"search\" name=\"search\" class=\"form-control\" type=\"text\" value=\"\" placeholder=\"Search articles\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n        </form>\n    </nav>\n</header>\n\n<div class=\"container\">\n    <div class=\"row\">\n        <aside class=\"sidebar col-md-3\">\n            ");
+  data.buffer.push(escapeExpression((helper = helpers.outlet || (depth0 && depth0.outlet),options={hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "sidebar", options) : helperMissing.call(depth0, "outlet", "sidebar", options))));
+  data.buffer.push("\n        </aside>\n        <div class=\"col-md-9\">\n            ");
   stack1 = helpers._triageMustache.call(depth0, "outlet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n");
+  data.buffer.push("\n        </div>\n    </div>\n</div>");
   return buffer;
   
 });

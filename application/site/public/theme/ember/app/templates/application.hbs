@@ -19,5 +19,13 @@
     </nav>
 </header>
 
-
-{{outlet}}
+<div class="container">
+    <div class="row">
+        <aside class="sidebar col-md-3">
+            {{outlet sidebar}}
+        </aside>
+        <div class="col-md-9">
+            {{outlet}}
+        </div>
+    </div>
+</div>

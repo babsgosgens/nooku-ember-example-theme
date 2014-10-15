@@ -11,6 +11,6 @@ module.exports = App.Router.map(function() {
     });
 });
 
-// module.exports = App.Router.reopen({
-//   location: 'history'
-// });
+module.exports = App.Router.reopen({
+  location: 'history'
+});
