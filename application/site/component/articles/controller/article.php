@@ -22,6 +22,7 @@ class ArticlesControllerArticle extends Library\ControllerModel
         $config->append(array(
             'formats'   => array('rss'),
             'toolbars'  => array('article'),
+            'formats'   => array('json'),
             'behaviors' => array('editable', 'searchable'))
         );
 
