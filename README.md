@@ -32,8 +32,11 @@ brunch build --production
 ### Contribution
 This project is meant to be a group effort. Feel free to add to this theme by sending in PR’s.
 
-Nooku Platform is included in this repository at the moment, as I have adapted *ArticlesControllerArticle* to allow JSON requests. If anyone can submit a PR with a more elegant solution, say an Articles component override, that would be nice. If such a component override could also allow for frontend editing, than that would be even nicer.
+#### Call for help
+Nooku Platform is included in this repository at the moment, as I have adapted *ArticlesControllerArticle* to allow JSON requests.
 
 The idea is to have this theme available as a [Brunch](http://brunch.io/) skeleton.
+
+If anyone can submit a PR with a more elegant solution, say an Articles component override, that would be nice. If such a component override could also allow for frontend editing, than that would be even nicer.
 
 
