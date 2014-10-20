@@ -1,5 +1,5 @@
-nooku-ember-example-theme
-=========================
+Nooku Platform Example Ember Theme
+==================================
 
 A example theme for [Nooku Platform](https://github.com/nooku/nooku-platform) implementing [EmberJS](http://emberjs.com/). 
 
