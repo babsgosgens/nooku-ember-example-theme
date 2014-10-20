@@ -17,5 +17,17 @@ and run
 npm install
 ```
 
+To compile, run
+
+```
+brunch watch -s
+```
+or
+
+```
+brunch build --production
+```
+
+
 ### Contribution
 This project is meant to be a group effort. Feel free to add to this theme by sending in PR’s.
